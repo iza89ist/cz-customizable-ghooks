@@ -2,6 +2,7 @@
 const assert = require('assert');
 const fs = require('fs');
 const chalk = require('chalk');
+const gitRootDir = require('git-root-dir');
 
 describe('cz-customizable-ghooks', () => {
   const rewire = require('rewire');
@@ -421,18 +422,22 @@ describe('cz-customizable-ghooks', () => {
 
 
     it('should read the commit message from a file that is passed as an argument', () => {
-      createCommitMessageFile('foo');
+      gitRootDir(__dirname).then((GIT_ROOT) => {
+        createCommitMessageFile('foo');
 
-      let fileNameThatIsRead;
+        let fileNameThatIsRead = GIT_ROOT;
 
-      revert2 = module.__set__({
-        'fs.readFile': (name) => {
-          fileNameThatIsRead = name;
-        },
-      });
+        revert2 = module.__set__({
+          'fs.readFile': (name) => {
+            fileNameThatIsRead += name;
+          },
+        });
 
-      module.processCLI(commitMsgFileName);
-      assert.equal(fileNameThatIsRead, commitMsgFileName);
+        module.processCLI(commitMsgFileName);
+        assert.equal(fileNameThatIsRead, commitMsgFileName);
+      }).catch(err => {
+        throw new Error(err)
+      })
     });
 
 
