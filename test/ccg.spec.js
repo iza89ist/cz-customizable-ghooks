@@ -435,9 +435,9 @@ describe('cz-customizable-ghooks', () => {
 
         module.processCLI(commitMsgFileName);
         assert.equal(fileNameThatIsRead, commitMsgFileName);
-      }).catch(err => {
-        throw new Error(err)
-      })
+      }).catch((err) => {
+        throw new Error(err);
+      });
     });
 
 
